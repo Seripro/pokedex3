@@ -37,6 +37,24 @@ app.get("/api/v1/pokemons", async (c) => {
   return c.json(pokemons);
 });
 
+// 8.606802832999998秒
+app.get("/api/v2/pokemons", async (c) => {
+  const start = performance.now();
+  let Ids = [];
+  for (let i = 1; i < MAX_ID; i++) {
+    Ids.push(i);
+  }
+  const fetchData = async (id: number) => {
+    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
+    const pokemon = await res.json();
+    return pokemon;
+  };
+  const pokemons = await Promise.all(Ids.map((id) => fetchData(id)));
+  const end = performance.now();
+  console.log((end - start) / 1000);
+  return c.json(pokemons);
+});
+
 serve(
   {
     fetch: app.fetch,
