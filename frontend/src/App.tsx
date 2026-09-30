@@ -12,7 +12,7 @@ function App() {
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
   useEffect(() => {
     const fetchData = async () => {
-      const res = await fetch("http://localhost:3000/api/v1/pokemons");
+      const res = await fetch("http://localhost:3000/api/v3/pokemons");
       const pokemons: Pokemon[] = await res.json();
       setPokemons(pokemons);
     };
