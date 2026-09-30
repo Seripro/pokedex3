@@ -1,6 +1,7 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import { client } from "./redisClient.js";
 
 const app = new Hono();
 
@@ -63,6 +64,27 @@ app.get("/api/v2/pokemons", async (c) => {
   const end = performance.now();
   console.log((end - start) / 1000);
   return c.json(pokemons);
+});
+
+// キャッシュなし：5.208721250000003秒
+// キャッシュあり：0.63928125秒
+app.get("/api/v3/pokemons", async (c) => {
+  const start = performance.now();
+  const value = await client.get("pokemons");
+  if (!value) {
+    console.log("キャッシュがありません");
+    const pokemons = await processInParallel();
+    await client.set("pokemons", JSON.stringify(pokemons));
+    const end = performance.now();
+    console.log((end - start) / 1000);
+    return c.json(pokemons);
+  } else {
+    console.log("キャッシュがあります");
+    const pokemons = JSON.parse(value);
+    const end = performance.now();
+    console.log((end - start) / 1000);
+    return c.json(pokemons);
+  }
 });
 
 serve(
