@@ -7,12 +7,24 @@ app.get("/", (c) => {
   return c.text("Hello Hono!");
 });
 
+const MAX_ID = 1000;
+
 type Pokemon = {
   name: string;
   sprites: {
     front_default: string;
   };
 };
+
+app.get("/api/pokemons", async (c) => {
+  const pokemons: Pokemon[] = [];
+  for (let i = 1; i <= MAX_ID; i++) {
+    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${i}`);
+    const pokemon = await res.json();
+    pokemons.push(pokemon);
+  }
+  return c.json(pokemons);
+});
 
 serve(
   {
