@@ -23,7 +23,7 @@ type Pokemon = {
   };
 };
 
-app.get("/api/pokemons", async (c) => {
+app.get("/api/v1/pokemons", async (c) => {
   const pokemons: Pokemon[] = [];
   for (let i = 1; i <= MAX_ID; i++) {
     const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${i}`);
