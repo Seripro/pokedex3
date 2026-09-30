@@ -24,12 +24,15 @@ type Pokemon = {
 };
 
 app.get("/api/v1/pokemons", async (c) => {
+  const start = performance.now();
   const pokemons: Pokemon[] = [];
   for (let i = 1; i <= MAX_ID; i++) {
     const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${i}`);
     const pokemon = await res.json();
     pokemons.push(pokemon);
   }
+  const end = performance.now();
+  console.log((end - start) / 1000);
   return c.json(pokemons);
 });
 
