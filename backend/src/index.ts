@@ -2,6 +2,7 @@ import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { client } from "./redisClient.js";
+import type { Pokemon } from "./types/pokemon.js";
 
 const app = new Hono();
 
@@ -16,13 +17,6 @@ app.get("/", (c) => {
 });
 
 const MAX_ID = 1000;
-
-type Pokemon = {
-  name: string;
-  sprites: {
-    front_default: string;
-  };
-};
 
 const fetchData = async (id: number) => {
   const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
