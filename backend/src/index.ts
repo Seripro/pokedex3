@@ -23,6 +23,25 @@ type Pokemon = {
   };
 };
 
+const fetchData = async (id: number) => {
+  const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
+  const pokemon = await res.json();
+  return pokemon;
+};
+
+const processInParallel = async () => {
+  let pokemons: Pokemon[] = [];
+  for (let j = 10; j <= MAX_ID; j = j + 10) {
+    let Ids = [];
+    for (let i = j - 9; i <= j; i++) {
+      Ids.push(i);
+    }
+    const res = await Promise.all(Ids.map((id) => fetchData(id)));
+    pokemons.push(...res);
+  }
+  return pokemons;
+};
+
 // 20.95678699999998秒
 app.get("/api/v1/pokemons", async (c) => {
   const start = performance.now();
@@ -37,19 +56,10 @@ app.get("/api/v1/pokemons", async (c) => {
   return c.json(pokemons);
 });
 
-// 8.606802832999998秒
+// 3.9947245000000002秒
 app.get("/api/v2/pokemons", async (c) => {
   const start = performance.now();
-  let Ids = [];
-  for (let i = 1; i < MAX_ID; i++) {
-    Ids.push(i);
-  }
-  const fetchData = async (id: number) => {
-    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
-    const pokemon = await res.json();
-    return pokemon;
-  };
-  const pokemons = await Promise.all(Ids.map((id) => fetchData(id)));
+  const pokemons = await processInParallel();
   const end = performance.now();
   console.log((end - start) / 1000);
   return c.json(pokemons);
