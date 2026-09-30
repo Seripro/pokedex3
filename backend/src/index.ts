@@ -23,6 +23,7 @@ type Pokemon = {
   };
 };
 
+// 20.95678699999998秒
 app.get("/api/v1/pokemons", async (c) => {
   const start = performance.now();
   const pokemons: Pokemon[] = [];
