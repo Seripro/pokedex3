@@ -10,6 +10,8 @@ type Pokemon = {
 
 function App() {
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
+  const [query, setQuery] = useState("");
+
   useEffect(() => {
     const fetchData = async () => {
       const res = await fetch("http://localhost:3000/api/v3/pokemons");
@@ -20,14 +22,21 @@ function App() {
   }, []);
   return (
     <>
-      {pokemons.map((pokemon) => {
-        return (
-          <div key={pokemon.name}>
-            <img src={pokemon.sprites.front_default} />
-            <p>{pokemon.name}</p>
-          </div>
-        );
-      })}
+      <input
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="ポケモンの名前を入力してください"
+      />
+      {pokemons
+        .filter((pokemon) => pokemon.name.includes(query))
+        .map((pokemon) => {
+          return (
+            <div key={pokemon.name}>
+              <img src={pokemon.sprites.front_default} />
+              <p>{pokemon.name}</p>
+            </div>
+          );
+        })}
     </>
   );
 }
