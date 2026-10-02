@@ -69,6 +69,7 @@ app.get("/api/v3/pokemons", async (c) => {
     console.log("キャッシュがありません");
     const pokemons = await processInParallel();
     await client.set("pokemons", JSON.stringify(pokemons));
+    await client.expire("pokemons", 3600);
     const end = performance.now();
     console.log((end - start) / 1000);
     return c.json(pokemons);
